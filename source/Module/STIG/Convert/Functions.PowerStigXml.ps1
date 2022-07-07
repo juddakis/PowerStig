@@ -921,3 +921,21 @@ function Get-RuleChangeLog
 }
 
 #endregion
+
+
+function Get-OrganizationalSettingsXmlFilePrevious
+{
+
+    # Get previous version of the processed xml
+    $procesedDirectory = (Get-Item $Destination).DirectoryName
+    $destinationString = $destination.split("\")
+    $stringLength = $destinationString.Length
+    $technologySplit = $destinationString[$stringLength - 1].Split("-")
+    $technologyCombined = '{0}-{1}' -f $technologySplit[0],  $technologySplit[1]
+    $previousOrgSettings = (Get-ChildItem $procesedDirectory -filter "*org*" | Where-Object -Property Name -Match $technologyCombined)[0].FullName
+    [xml] $previousOrgSettingsXML = get-content $previousOrgSettings
+    $previousOrganizationalSettings = $previousOrgSettingsXML.OrganizationalSettings.OrganizationalSetting
+
+    $previousOrganizationalSettings
+}
+
